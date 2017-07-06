@@ -4,11 +4,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 
 import com.google.gson.Gson;
 import com.hm.okhttpdemo.R;
-import com.hm.okhttpdemo.utils.NetWorkUtil;
 import com.hm.okhttpdemo.model.NowWeatherBean;
+import com.hm.okhttpdemo.utils.NetWorkUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -74,8 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
     }
 
-    private void asynGet() {
-
+    public void asynGet(View view) {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                //并不是在主线程
+                // Log.e(TAG, "current Thread:"+Thread.currentThread().getName());
                 if (response.isSuccessful()) {
                     Headers headers = response.headers();
                     CacheControl cacheControl = response.cacheControl();
@@ -280,6 +282,17 @@ public class MainActivity extends AppCompatActivity {
                 call.cancel();
             }
         }, 1, TimeUnit.SECONDS);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+            }
+        });
     }
 
     private void preCallConfiguration() {
@@ -408,7 +421,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 
     private static class CacheInterceptor implements Interceptor {
 
