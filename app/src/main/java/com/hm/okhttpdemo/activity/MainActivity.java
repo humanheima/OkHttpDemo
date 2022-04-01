@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initOkHttpClient() {
-        File cacheDir = getExternalCacheDir();
+        File cacheDir = getFilesDir();
+        Log.i(TAG, "initOkHttpClient: cacheDir = " + cacheDir.getAbsolutePath());
         int size = 100 * 1024 * 1024;
         Cache cache = new Cache(cacheDir, size);
         client = new OkHttpClient.Builder()
